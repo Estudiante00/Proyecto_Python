@@ -1,10 +1,30 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from app.emotion_detector import EmocionDetector
+from app.response_formater import ResponseFormater
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "¡Hola, Oscar!"
+# Ruta del archivo JSON con las credenciales de Google Cloud
+credenciales_google = "C:\\Users\\Jhoan.rivera\\Downloads\\credentials.json"
+
+# Inicializa el detector de emociones con las credenciales de Google Cloud
+emotion_detector = EmocionDetector(credentials_path=credenciales_google)
+
+# Inicializa el formateador de respuestas
+response_formatter = ResponseFormater()
+
+@app.route('/detect_emotion', methods=['POST'])
+def detectar_emocion():
+    try:
+        data = request.get_json()
+        text = data.get('text')
+        emotions = emotion_detector.detect_emocion(text)
+        formatted_response = response_formatter.format_response(emotions)
+        return jsonify(formatted_response)
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 400
+    except Exception as e:
+        return jsonify({'error': 'Error al procesar la solicitud'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
