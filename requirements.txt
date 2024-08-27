@@ -1,0 +1,10 @@
+Flask==2.0.1
+ibm-watson==5.2.3
+pylint==2.9.6
+requests==2.25.1
+pytest==6.2.4
+pip install google-cloud-language
+
+#Para activar el entorno virtual 
+.\Scripts\activate
+.\emociones\Scripts\activate   
